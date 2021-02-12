@@ -1,0 +1,10 @@
+export const dodaniePrzedmiotu = "/dodaniePrzedmiotu";
+export const logowanie = "/logowanie";
+export const rejestracja = "/rejestracja";
+export const dzialy = "/dzialy";
+export const podgladPrzedmiotu = '/podgladPrzedmiotu';
+export const udostepnionePrzedmioty = '/udostepnionePrzedmioty';
+export const wypozyczonePrzedmioty = '/wypozyczonePrzedmioty';
+export const wypozyczeniePrzedmiotu = '/wypozyczenie';
+export const edycjaPrzedmiotu = '/edycja';
+export const konto = '/twojeKonto';
