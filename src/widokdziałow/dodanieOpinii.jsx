@@ -71,7 +71,7 @@ IconContainer.propTypes = {
     value: PropTypes.number.isRequired,
 };
 
-export default function PBject() {
+export default function DodanieOpinii() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [open2, setOpen2] = React.useState(false);
@@ -80,8 +80,6 @@ export default function PBject() {
     const [opis, setOpis] = useState();
     const [wypozyczeniePoczatek, setPoczatek] = useState();
     const [wypozyczenieZakonczenie, setZakonczenie] = useState();
-    const [dzial, setDzialPrzedmiotu] = useState();
-    const [uzytkownikudostep, setUzytkownik] = useState();
     const history = useHistory();
     const [infoDodatkowe, setInfo] = useState("");
     const { przedmiotid } = useParams();
@@ -130,44 +128,15 @@ export default function PBject() {
     );
 
 
-    const getUzytkownik = async (uzytkownikUdostepniajacyid) => {
-        const response = await apiClient.get(`http://127.0.0.1:8000/uzytkownik/${uzytkownikUdostepniajacyid}`);
-        return response.data.username;
-    };
-
-    const getDzial = async (dzialid) => {
-        const response = await apiClient.get(`http://127.0.0.1:8000/dzialy/${dzialid}`);
-        return response.data.nazwa;
-    };
 
     useEffect(() => {
         async function fetchData() {
             const response = await getPrzedmiot(przedmiotid);
             setData(response);
-            const response2 = await getDzial(response.dzialPrzedmiotu);
-            setDzialPrzedmiotu(response2);
-            const response3 = await getUzytkownik(response.uzytkownikUdostepniajacy);
-            setUzytkownik(response3);
         }
         fetchData();
     }, []);
 
-    const uzytkownikid = AuthService.getCurrentUser();
-
-
-
-    const WypozyczeniePrzedmiotu = async (form) => {
-        await apiClient.post(`http://127.0.0.1:8000/wypozyczenia/`, form);
-    };
-
-    const handleChange = (form) => {
-        form.informacjeDodatkowe = infoDodatkowe;
-        form.wypozyczeniePoczatek = FormatDate(selectedDate);
-        form.wypozyczenieZakonczenie = FormatDate(selectedDate2);
-        form.przedmiot = przedmiotid;
-        form.uzytkownik = uzytkownikid.id;
-        WypozyczeniePrzedmiotu(form);
-    };
 
 
     const DodanieOpinii = async (form) => {
@@ -178,10 +147,6 @@ export default function PBject() {
     };
 
     const handleChange1 = (form) => {
-        form.przedmiot = przedmiotid;
-        form.skalaZadowolenia = skalaZadowolenia;
-        form.opis = opis;
-        form.uzytkownik = uzytkownikid.id;
         DodanieOpinii(form);
         console.log("form3", form)
     };
@@ -207,14 +172,14 @@ export default function PBject() {
                     </div>
                     <Typography variant="h6" className={classes.typograpg} name="miasto">{data ? data.miasto : "ładowanie"}</Typography>
                     <Typography variant="h6" className={classes.typograpg} name="cena">{data ? data.cena : "ładowanie"} zł za dzień</Typography>
-                    <Typography variant="h6" className={classes.typograpg} name="dzialPrzedmiotu">{dzial ? dzial : "ładowanie"}</Typography>
+                    <Typography variant="h6" className={classes.typograpg} name="dzialPrzedmiotu">{data ? data.dzialPrzedmiotu : "ładowanie"}</Typography>
                     <TextareaAutosize
                         rowsMax={5}
                         readOnly
                         value={data ? data.opisPrzedmiotu : "brak opisu"}
                         name="opisPrzedmiotu"
                     />
-                    <Typography name="uzytkownikUdostepniający">{uzytkownikudostep ? uzytkownikudostep : "user12"} </Typography>
+                    <Typography name="uzytkownikUdostepniający">{data ? data.uzytkownikUdostepniajacy : "ładowanie"} </Typography>
                     <Typography name="dostępnośćPoczątek">{data ? data.dostepnoscPoczątek : "ładowanie"} </Typography>
                     <Typography name="dostępnośćZakończenie">{data ? data.dostepnoscZakończenie : "ładowanie"} </Typography>
                     <div className={classes.divv}>
@@ -291,7 +256,7 @@ export default function PBject() {
                         >
                             <DialogTitle id="alert-dialog-slide-title">Wystaw Opinie</DialogTitle>
                             <DialogContent>
-                                <form onSubmit={handleSubmit(handleChange1)}>
+                                <form onSubmit={(e) => handleChange1(e.target.value)}>
                                     <DialogContentText>
                                         <TextareaAutosize placeholder="Opinia" aria-label="minimum height" rowsMin={3} name="opis" value={opis}
                                             onChange={(e) => setOpis(e.target.value)} />

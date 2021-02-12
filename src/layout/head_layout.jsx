@@ -43,14 +43,14 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 4,
-    variant:'h6',
-    align:"center",
-    component:"h3",
-    fontWeight:'bold',
-    fontSize:'25px',
+    variant: 'h6',
+    align: "center",
+    component: "h3",
+    fontWeight: 'bold',
+    fontSize: '25px',
     position: 'relative',
     left: '300px',
-    letterSpacing:'10px'
+    letterSpacing: '10px'
   },
   buttonMenu: {
     marginRight: theme.spacing(2),
@@ -118,8 +118,8 @@ export default function App() {
             <MenuIcon />
           </IconButton>
           <Typography
-          className={classes.title}
-           >
+            className={classes.title}
+          >
             Wypożyczalnia
           </Typography>
           <PopupState variant="popover" popupId="demo-popup-popover" className={classes.popup}>
@@ -172,7 +172,7 @@ export default function App() {
             disableRipple
             style={{ backgroundColor: "transparent", color: 'white' }}
           >
-            <ListItemIcon style={{color:'white'}}>
+            <ListItemIcon style={{ color: 'white' }}>
               <LayersIcon />
             </ListItemIcon>
                  Działy
@@ -184,7 +184,7 @@ export default function App() {
             disableRipple
             style={{ backgroundColor: "transparent", color: 'white' }}
           >
-            <ListItemIcon style={{color:'white'}}>
+            <ListItemIcon style={{ color: 'white' }}>
               <SpaIcon />
             </ListItemIcon>
             Rolnictwo
@@ -196,7 +196,7 @@ export default function App() {
             disableRipple
             style={{ backgroundColor: "transparent", color: 'white' }}
           >
-            <ListItemIcon style={{color:'white'}}>
+            <ListItemIcon style={{ color: 'white' }}>
               <DriveEtaIcon />
             </ListItemIcon>
             Motoryzacja
@@ -208,7 +208,7 @@ export default function App() {
             disableRipple
             style={{ backgroundColor: "transparent", color: 'white' }}
           >
-            <ListItemIcon style={{color:'white'}}>
+            <ListItemIcon style={{ color: 'white' }}>
               <LocalFloristIcon />
             </ListItemIcon>
             Dom i ogród
@@ -220,14 +220,14 @@ export default function App() {
             disableRipple
             style={{ backgroundColor: "transparent", color: 'white' }}
           >
-            <ListItemIcon style={{color:'white'}}>
+            <ListItemIcon style={{ color: 'white' }}>
               <BuildIcon />
             </ListItemIcon>
             Narzędzia
                 </Button>
         </ListItem>
       </Drawer>
-      <PreviewObject/>
+      <PreviewObject />
     </div>
 
   );

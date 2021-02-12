@@ -1,6 +1,6 @@
 import { makeStyles } from "@material-ui/core";
 
- const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
     napis:
     {
         color: '#190423',
@@ -47,4 +47,4 @@ import { makeStyles } from "@material-ui/core";
         color: '#190423',
     },
 }));
- export default useStyles;
+export default useStyles;

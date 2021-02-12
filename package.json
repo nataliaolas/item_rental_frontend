@@ -33,6 +33,7 @@
     "reducers": "^3.0.0-alpha",
     "redux": "^4.0.5",
     "redux-persist": "^6.0.0",
+    "redux-selector": "^0.2.0",
     "yarn": "^1.22.5",
     "yup": "^0.29.3"
   },

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Paper, Typography, } from '@material-ui/core';
 import Rating from '@material-ui/lab/Rating';
 import ListItem from '@material-ui/core/ListItem';
@@ -10,6 +10,9 @@ import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAltO
 import SentimentVerySatisfiedIcon from '@material-ui/icons/SentimentVerySatisfied';
 import apiClient from '../api/apiClient';
 import useStyles from './styles';
+import { useParams } from 'react-router-dom';
+import List from '@material-ui/core/List';
+
 
 const customIcons = {
     1: {
@@ -34,51 +37,53 @@ const customIcons = {
     },
 };
 
-const messages = [
-    {
-        id: 1,
-        secondary: "Produkt jest swietny!",
-        person: "nata;ka",
-    },
-    {
-        id: 2,
-        secondary: `Miły własciciel,wspolpraca przebiegła sprawnie, super sprzet!`,
-        person: "xddddd",
-    },
-];
 function IconContainer(props) {
     const { value, ...other } = props;
     return <span {...other}>{customIcons[value].icon}</span>;
 }
 
 
-export const ListaOpinii = async () => {
-    await apiClient.post(`http://127.0.0.1:8000/opinie/`);
-};
-
-export default function PodglądOpinii(){
+export default function PodglądOpinii() {
     const classes = useStyles();
-    return(
+    const { przedmiotid } = useParams();
+    const [data, setData] = React.useState();
+
+    const getListaOpinii = async (przedmiotid) => {
+        const response = await apiClient.get(`http://127.0.0.1:8000/opinie/?przedmiot=${przedmiotid}`);
+        return response.data;
+    };
+
+    useEffect(() => {
+        async function fetchData() {
+            const response = await getListaOpinii(przedmiotid);
+            setData(response);
+        }
+        fetchData();
+    }, []);
+
+    return (
         <Grid container spacing={2}>
-        <Paper className={classes.rot} elevation={3}>
-            <Typography className={classes.text} variant="h6" gutterBottom>
-                Opinie użytkowników
+            <Paper className={classes.rot} elevation={3}>
+                <Typography className={classes.text} variant="h6" gutterBottom>
+                    Opinie użytkowników
             </Typography>
-            {messages.map(({ secondary, person }) => (
-                <React.Fragment>
-                    <ListItem button>
-                        <ListItemText person={person} secondary={secondary} />
-                        <Rating
-                            name="customized-icons"
-                            defaultValue={2}
-                            getLabelText={(value) => customIcons[value].label}
-                            IconContainerComponent={IconContainer}
-                            readOnly
-                        />
-                    </ListItem>
-                </React.Fragment>
-            ))}
-        </Paper>
-    </Grid>
+                <List>
+                    {data ? data.map((opinia) => (
+                        <ListItem key={opinia.id} value={opinia}>
+                            <Typography>{opinia.opis}</Typography>
+                            <ListItemText value={opinia.opis} name="opis" />
+                            <Rating
+
+                                name=""
+                                defaultValue={opinia.skalaZadowolenia}
+                                IconContainerComponent={IconContainer}
+                                readOnly
+                            />
+                        </ListItem>
+
+                    )) : "ładowanie"};
+            </List>
+            </Paper>
+        </Grid>
     )
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, TextField, Paper, Button,  Typography, InputLabel,MenuItem,Select } from '@material-ui/core';
+import { Grid, TextField, Paper, Button, Typography, InputLabel, MenuItem, Select } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import {
     MuiPickersUtilsProvider,
@@ -8,7 +8,7 @@ import {
 import apiClient from '../api/apiClient';
 import { useForm } from "react-hook-form";
 import useStyles from './styles';
-
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 
 export default function Pbject() {
@@ -16,7 +16,10 @@ export default function Pbject() {
     const [data, setData] = useState();
     const [nazwa, setNazwa] = useState("");
     const [miasto, setMiasto] = useState("");
+    const [zdjecie, setZdjecie] = useState();
     const [opis, setOpis] = useState("");
+    const [cena, setCena] = useState("");
+
     const [selectedDate, setSelectedDate] = React.useState(new Date('2020-10-18'));
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -25,10 +28,10 @@ export default function Pbject() {
     const handleDateChange2 = (date) => {
         setSelectedDate2(date);
     };
-    const [dział, Działy] = React.useState('');
+    const [dzialPrzedmiotu, Działy] = React.useState();
 
     const handleChangers = (event) => {
-        Działy(event.target.value);
+        Działy(event.target.value.id);
     };
 
 
@@ -44,7 +47,7 @@ export default function Pbject() {
 
 
     const DodaniePrzedmiotu = async (form) => {
-        await apiClient.post(`http://127.0.0.1:8000/przedmiot/`, form);
+        await apiClient.post(`http://127.0.0.1:8000/przedmiotyy/`, form);
     };
 
     const { handleSubmit } = useForm(
@@ -56,35 +59,43 @@ export default function Pbject() {
     const FormatDate = (date) => {
 
         const year = date.getFullYear();
-        var month =''+(date.getMonth()+1);
-        var day =''+date.getDate();
+        var month = '' + (date.getMonth() + 1);
+        var day = '' + date.getDate();
 
-        if(month.length<2)
-        {
-            month = '0'+month;
+        if (month.length < 2) {
+            month = '0' + month;
         }
-        if(day.length<2)
-        {
-            day= '0'+day;
+        if (day.length < 2) {
+            day = '0' + day;
         }
-        return year+'-'+month+'-'+day;
+        return year + '-' + month + '-' + day;
+    };
+
+
+    const handlezdjecie = (event) => {
+        console.log("event", event);
+        setZdjecie(event.target.file);
     };
 
 
     const handleChange = (form) => {
+        form.zdjecie = zdjecie;
         form.nazwa = nazwa;
         form.miasto = miasto;
         form.opisPrzedmiotu = opis;
-        form.dostępnośćPoczątek = FormatDate(selectedDate);
-        form.dostępnośćZakończenie = FormatDate(selectedDate2);
+        form.cena = cena;
+        form.dostepnoscPoczatek = FormatDate(selectedDate);
+        form.dostepnoscZakonczenie = FormatDate(selectedDate2);
+        console.log("dzial przedmiotu", dzialPrzedmiotu);
+        form.dzialPrzedmiotu = dzialPrzedmiotu;
         console.log("czas Poczatek", form.dostępnośćPoczątek);
         console.log("form: ", form);
+        console.log("zdjecie", zdjecie);
         DodaniePrzedmiotu(form);
         console.log("submit2");
     };
 
     return (
-        // <Container>
         <form onSubmit={handleSubmit(handleChange)}>
             <Grid container spacing={3}>
                 <Paper className={classes.root}>
@@ -93,13 +104,13 @@ export default function Pbject() {
                         <Typography>Dodaj zdjęcie przedmiotu:
                     <input
                                 accept="image/*"
-                                defaultValue=''
+                                value={zdjecie}
                                 className={classes.rot}
                                 id="contained-button-file"
                                 multiple
                                 type="file"
-                                backgroundColor="#190423"
-                                name="zdjęcie"
+                                name="zdjecie"
+                                onChange={handlezdjecie}
                             />
                         </Typography>
                     </div>
@@ -132,12 +143,25 @@ export default function Pbject() {
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     onChange={handleChangers}
+                                    name="dzialPrzedmiotu"
                                 >
-                                    {data?.map((dzial) => (
-                                        <MenuItem key={dzial.id} value={dzial.id} >{dzial.nazwa}</MenuItem>
+                                    {data?.map((dzialPrzedmiotu) => (
+                                        <MenuItem key={dzialPrzedmiotu.id} value={dzialPrzedmiotu} >{dzialPrzedmiotu.nazwa}</MenuItem>
                                     ))}
                                 </Select>
                             </div>
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="standard-multiline-flexible"
+                                label="Cena"
+                                type="cena"
+                                value={cena}
+                                onChange={(e) => setCena(e.target.value)}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">Zł</InputAdornment>,
+                                }}
+                            />
                         </Grid>
                         <div className={classes.rot}>
                             <Grid item xs={12} sm={6}>
@@ -162,6 +186,7 @@ export default function Pbject() {
                                     format="yyyy/mm/dd"
                                     margin="normal"
                                     id="date-picker-inline"
+                                    name="dostepnoscZakonczenie"
                                     label="Date picker inline"
                                     value={selectedDate}
                                     onChange={handleDateChange}
@@ -172,7 +197,7 @@ export default function Pbject() {
                                 <KeyboardDatePicker
                                     defaultValue=''
                                     margin="normal"
-                                    name="dostępnośćZakończenie"
+                                    name="dostepnoscZakonczenie"
                                     id="date-picker-dialog"
                                     label="Data oddania"
                                     format="yyyy/mm/dd"
@@ -191,6 +216,5 @@ export default function Pbject() {
                 </Paper>
             </Grid>
         </form>
-        // </Container>
     );
 };

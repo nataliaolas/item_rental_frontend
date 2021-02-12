@@ -21,6 +21,7 @@ import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import LocalFloristIcon from '@material-ui/icons/LocalFlorist';
 import SpaIcon from '@material-ui/icons/Spa';
 import BuildIcon from '@material-ui/icons/Build';
+import Grid from '@material-ui/core/Grid';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Container from '@material-ui/core/Container';
 import { Link } from "react-router-dom";
@@ -34,7 +35,10 @@ import {
   wypozyczonePrzedmioty,
   wypozyczeniePrzedmiotu,
   edycjaPrzedmiotu,
-  konto
+  konto,
+  widokuzytkownika,
+  glowna,
+  konkretny_dzial
 }
   from '../src/common/routes';
 import Pbject from '../src/dodanieprzedmiotu/dodanieprzedmiotu';
@@ -47,6 +51,9 @@ import Sharing from '../src/widokPrzedmiotów/wypożyczonePrzedmioty';
 import LendItem from '../src/wypozyczeniePrzedmiotu/wypozyczeniePrzedmiotu';
 import DeleteBject from '../src/usuwanieEdycjaPrzedmiotu/usunEdytujPrzedmiot';
 import Account from '../src/logowanie/konto';
+import WidokUzytkownika from "../src/widokUzytkownika/widokuzytkownika";
+import AuthService from "../src/api/auth";
+
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -72,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     fontSize: '25px',
     position: 'relative',
-    left: '300px',
+    left: '170px',
     letterSpacing: '10px',
     fontStyle: 'italic',
   },
@@ -108,6 +115,13 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     backgroundColor: '#502664'
+  },
+  link: {
+    display: 'none',
+  },
+  grids: {
+    display: 'flex',
+    justifyContent: 'space-between',
   }
 }));
 
@@ -115,7 +129,12 @@ export default function App() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
-
+  const userid = AuthService.getCurrentUser();
+  /***funkcja wylogywania */
+  const HandleWyloguj = () => {
+    AuthService.logout()
+    window.location.reload();
+  }
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -125,13 +144,14 @@ export default function App() {
     setOpen(false);
   };
 
+
   return (
     <Router>
       <div>
         <CssBaseline />
         <AppBar
           style={{ backgroundColor: '#502664' }}
-          position="fixed"
+          position="absolute"
           className={clsx(classes.appBar, {
             [classes.inAppBarShift]: open,
           })}
@@ -146,39 +166,55 @@ export default function App() {
               <MenuIcon />
             </IconButton>
             <Typography
+              Wrap
               className={classes.title}
-              noWrap
             >
               Wypożyczalnia
           </Typography>
-            <PopupState variant="popover" popupId="demo-popup-popover" className={classes.popup}>
-              {(popupState) => (
-                <div>
-                  <Button variant="contained" style={{ backgroundColor: '#190423', color: 'white' }} {...bindTrigger(popupState)}>
-                    Twoje przedmioty
+            {console.log("AUTH USER", AuthService.getCurrentUser())}
+            {
+              (AuthService.getCurrentUser())
+                ?
+                <div className={classes.grids}>
+                  <PopupState variant="popover" popupId="demo-popup-popover" className={classes.popup}>
+                    {(popupState) => (
+                      <Grid >
+                        <Button variant="contained" style={{ backgroundColor: '#190423', color: 'white' }} {...bindTrigger(popupState)}>
+                          Twoje przedmioty
           </Button>
-                  <Menu {...bindPopover(popupState)} >
-                    <Link to={dodaniePrzedmiotu} > <MenuItem onClick={popupState.close} className={classes.menuItem}>Dodaj przedmiot</MenuItem> </Link>
-                    <Link to={udostepnionePrzedmioty}>  <MenuItem onClick={popupState.close} className={classes.menuItem}>Przedmioty udostępnione</MenuItem> </Link>
-                    <Link to={wypozyczonePrzedmioty}> <MenuItem onClick={popupState.close} className={classes.menuItem}>Przedmioty wypożyczone</MenuItem> </Link>
-                    <Link to={edycjaPrzedmiotu}> <MenuItem onClick={popupState.close} className={classes.menuItem}>Edytuj/Usuń przedmiot</MenuItem> </Link>
-                  </Menu>
-                </div>
-              )}
-            </PopupState>
-            <PopupState variant="popover" popupId="demo-popup-popover" className={classes.popup}>
-              {(popupState) => (
-                <div>
-                  <Button variant="contained" style={{ background: '#190423', color: 'white' }} {...bindTrigger(popupState)}>
-                    Twoje konto
+                        <Menu {...bindPopover(popupState)} >
+                          <Link to={dodaniePrzedmiotu} > <MenuItem onClick={popupState.close} className={classes.menuItem}>Dodaj przedmiot</MenuItem> </Link>
+                          <Link to={`/udostepnionePrzedmioty/${userid.id}`}>  <MenuItem onClick={popupState.close} className={classes.menuItem}>Przedmioty udostępnione</MenuItem> </Link>
+                          <Link to={`/wypozyczonePrzedmioty/${userid.id}`}> <MenuItem onClick={popupState.close} className={classes.menuItem}>Przedmioty wypożyczone</MenuItem> </Link>
+                          <Link to={`/edycja/${userid.id}`}> <MenuItem onClick={popupState.close} className={classes.menuItem}>Edytuj/Usuń przedmiot</MenuItem> </Link>
+                        </Menu>
+                      </Grid>
+                    )}
+                  </PopupState>
+                  <PopupState variant="popover" popupId="demo-popup-popover" className={classes.popup}>
+                    {(popupState) => (
+                      <Grid >
+                        <Button variant="contained" style={{ background: '#190423', color: 'white' }} {...bindTrigger(popupState)}>
+                          Twoje konto
           </Button>
-                  <Menu {...bindPopover(popupState)} >
-                    <Link to={konto}>  <MenuItem onClick={popupState.close} className={classes.menuItem}>Twoje konto</MenuItem></Link>
-                    <Link to={logowanie}> <MenuItem onClick={popupState.close} className={classes.menuItem}>Wyloguj się</MenuItem>  </Link>
-                  </Menu>
+                        <Menu {...bindPopover(popupState)} >
+                          <Link to={konto}>  <MenuItem onClick={popupState.close} className={classes.menuItem}>Twoje konto</MenuItem></Link>
+                          {console.log("AUTH USER", AuthService.getCurrentUser())}
+                          {
+                            (AuthService.getCurrentUser())
+                              ?
+                              <Link to="/" style={{ textDecoration: 'none', color: '#FFF' }}> <Button onClick={() => HandleWyloguj()} className={classes.menuItem}>Wyloguj sie</Button> </Link>
+                              :
+                              <Link to={logowanie}> <MenuItem onClick={popupState.close} className={classes.menuItem}>Zaloguj się</MenuItem>  </Link>
+                          }
+                        </Menu>
+                      </Grid>
+                    )}
+                  </PopupState>
                 </div>
-              )}
-            </PopupState>
+                :
+                <Link to={logowanie}> <MenuItem style={{ backgroundColor: '#190423', color: 'white' }}>Zaloguj się</MenuItem>  </Link>
+            }
           </Toolbar>
         </AppBar>
         <Drawer
@@ -210,31 +246,35 @@ export default function App() {
             </ListItem>
           </Link>
           <ListItem button>
-            <Button
-              fullWidth={true}
-              disableRipple
-              style={{ backgroundColor: "transparent", color: 'white' }}
-            >
-              <ListItemIcon style={{ color: 'white' }}>
-                <SpaIcon />
-              </ListItemIcon>
+            <Link to={`/dzial/1`}>
+              <Button
+                fullWidth={true}
+                disableRipple
+                style={{ backgroundColor: "transparent", color: 'white' }}
+              >
+                <ListItemIcon style={{ color: 'white' }}>
+                  <SpaIcon />
+                </ListItemIcon>
             Rolnictwo
                 </Button>
+            </Link>
           </ListItem>
           <ListItem button>
-            <Button
-              fullWidth={true}
-              disableRipple
-              style={{ backgroundColor: "transparent", color: 'white' }}
-            >
-              <ListItemIcon style={{ color: 'white' }}>
-                <DriveEtaIcon />
-              </ListItemIcon>
+            <Link to={`/dzial/3`}>
+              <Button
+                fullWidth={true}
+                disableRipple
+                style={{ backgroundColor: "transparent", color: 'white' }}
+              >
+                <ListItemIcon style={{ color: 'white' }}>
+                  <DriveEtaIcon />
+                </ListItemIcon>
             Motoryzacja
-                </Button>
+            </Button>
+            </Link>
           </ListItem>
           <ListItem button>
-            <Button
+            <Link to={`/dzial/4`}><Button
               fullWidth={true}
               disableRipple
               style={{ backgroundColor: "transparent", color: 'white' }}
@@ -243,10 +283,10 @@ export default function App() {
                 <LocalFloristIcon />
               </ListItemIcon>
             Dom i ogród
-                </Button>
+            </Button></Link>
           </ListItem>
           <ListItem button>
-            <Button
+            <Link to={`/dzial/5`}><Button
               fullWidth={true}
               disableRipple
               style={{ backgroundColor: "transparent", color: 'white' }}
@@ -255,7 +295,7 @@ export default function App() {
                 <BuildIcon />
               </ListItemIcon>
             Narzędzia
-                </Button>
+            </Button></Link>
           </ListItem>
         </Drawer>
         <Container >
@@ -264,12 +304,15 @@ export default function App() {
             <Route path={logowanie} component={Login} />
             <Route path={rejestracja} component={Registration} />
             <Route path={dzialy} component={Dzialy} />
+            <Route path={konkretny_dzial} component={Dzialy} />
             <Route path={podgladPrzedmiotu} component={PreviewObject} />
             <Route path={udostepnionePrzedmioty} component={Sharing1} />
             <Route path={wypozyczonePrzedmioty} component={Sharing} />
             <Route path={wypozyczeniePrzedmiotu} component={LendItem} />
             <Route path={edycjaPrzedmiotu} component={DeleteBject} />
             <Route path={konto} component={Account} />
+            <Route path={widokuzytkownika} component={WidokUzytkownika} />
+            <Route path={glowna} component={Dzialy} />
           </Switch>
         </Container>
       </div>

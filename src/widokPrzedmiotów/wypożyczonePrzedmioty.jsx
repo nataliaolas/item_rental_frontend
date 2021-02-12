@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import  {Table,
+import {
+    Table,
     TableContainer,
     TableHead,
     TableRow,
@@ -8,10 +9,15 @@ import  {Table,
     TableCell,
     TableBody,
     Checkbox,
-    Typography}
+    Typography
+}
     from '@material-ui/core';
 import apiClient from '../api/apiClient';
 import useStyles from './styles';
+import WidokUzytkownika from '../widokUzytkownika/widokuzytkownika';
+import { widokuzytkownika } from '../common/routes';
+import { Link } from "react-router-dom";
+import AuthService from '../api/auth';
 
 const maxWidth = 240;
 const StyledTableCell = withStyles((theme) => ({
@@ -45,14 +51,19 @@ export default function Sharing() {
     const handleChange = (event) => {
         setState({ ...state, [event.target.name]: event.target.checked });
     };
+
+    const userid = AuthService.getCurrentUser();
+    console.log("userid", userid.id);
     useEffect(() => {
         const UdostepnionePrzedmioty = async () => {
-            const response = await apiClient.get(`http://127.0.0.1:8000/przedmiot/`);
+            const response = await apiClient.get(`http://127.0.0.1:8000/wypozyczenia/?uzytkownik=${userid.id}`);
             setData(response.data);
             return response.data;
         }
         const przedmioty = UdostepnionePrzedmioty();
     }, []);
+
+
     return (
         <TableContainer component={Paper} className={classes.root}>
             <Table aria-label="customized table">
@@ -60,27 +71,19 @@ export default function Sharing() {
                     <Typography className={classes.typograp}>PRZEDMIOTY WYPOŻYCZONE</Typography>
                     <TableRow>
                         <StyledTableCell align="center" className={classes.głownenapisy}> Przedmiot</StyledTableCell>
-                        <StyledTableCell align="right" className={classes.głownenapisy}>Dział</StyledTableCell>
                         <StyledTableCell align="right" className={classes.głownenapisy}>Udostępniający</StyledTableCell>
                         <StyledTableCell align="center" className={classes.głownenapisy}>Data wypożyczenia</StyledTableCell>
-                        <StyledTableCell align="center" className={classes.głownenapisy}>Data oddania</StyledTableCell>
-                        <StyledTableCell align="center" className={classes.głownenapisy}>Status</StyledTableCell>
+                        <StyledTableCell align="center" className={classes.głownenapisy}>Data końca wypoożyczania</StyledTableCell>
                     </TableRow>
                 </TableHead>
-                {data ? data.map((przedmiot) => (
+                {data ? data.map((wypozyczenie) => (
                     <TableBody>
                         <StyledTableRow >
-                            <StyledTableCell align="center" name="nazwa">{przedmiot.nazwa}
+                            <StyledTableCell align="center" name="nazwa">{wypozyczenie.nazwa_przedmiotu}
                             </StyledTableCell>
-                            <StyledTableCell align="right" name="dzialPrzedmiotu">{przedmiot.dzialPrzedmiotu}</StyledTableCell>
-                            <StyledTableCell align="right" name="uzytkownikUdostępniający">{przedmiot.uzytkownikUdostępniający}</StyledTableCell>
-                            <StyledTableCell align="right" name="dostępnośćPoczątek">{przedmiot.dostępnośćPoczątek}</StyledTableCell>
-                            <StyledTableCell align="right" name="dostępnośćZakończenie">{przedmiot.dostępnośćZakończenie}</StyledTableCell>
-                            <StyledTableCell align="center" name="status"><Checkbox
-                                onChange={handleChange}
-                                color='#190423'
-                                value="Check"
-                            /></StyledTableCell>
+                            <StyledTableCell align="right" name="uzytkownikUdostępniający"><Link to={`/widokuzytkownika/${wypozyczenie.uzytkownikid}`}>{wypozyczenie.imie_uzytkownika}</Link></StyledTableCell>
+                            <StyledTableCell align="center" name="wypozyczeniePoczatek">{wypozyczenie.wypozyczeniePoczatek}</StyledTableCell>
+                            <StyledTableCell align="center" name="wypozyczenieZakończenie">{wypozyczenie.wypozyczenieZakonczenie}</StyledTableCell>
                         </StyledTableRow>
                     </TableBody>
                 )) : "ładowanie"};

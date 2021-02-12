@@ -1,10 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles (theme => ({
+const useStyles = makeStyles(theme => ({
     root: {
         maxWidth: 505,
         align: 'center',
-
+        margin: theme.spacing(2),
     },
     media: {
         height: 300,
@@ -22,7 +22,7 @@ const useStyles = makeStyles (theme => ({
         left: '60px',
         width: '1000px',
         height: '400px',
-        float: 'left'
+        float: 'left',
     },
     media: {
         height: 200,
@@ -51,5 +51,23 @@ const useStyles = makeStyles (theme => ({
         border: '1px solid #ddd',
         float: 'right'
     },
+    filtry: {
+        margin: theme.spacing(1),
+        margin: 'auto',
+        position: 'relative',
+        top: '60px',
+        left: '350px',
+        width: '500px',
+        height: '250px'
+    },
+
+    buttons: {
+        // margin: theme.spacing(2),
+        color: '#190423',
+        textAlign: 'center'
+    },
+    typograpg: {
+        color: "#190423"
+    }
 }));
 export default useStyles;

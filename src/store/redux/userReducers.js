@@ -1,17 +1,16 @@
-const initialState = {userId:0}
+const initialState = { userId: 0 }
 
 export default function userReducer(
-    state=initialState,
+    state = initialState,
     action
-)
-{
-    switch(action){
+) {
+    switch (action) {
         case "USER_ID_ACTION":
             return {
                 ...state,
-                userId:0
+                userId: 0
             };
-            default:
-                return state;
+        default:
+            return state;
     }
 }
