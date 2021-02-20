@@ -17,7 +17,7 @@ In this application  we can:
 
 This project was created on Engineering Work.
 
-## Technology 
+## Technologies 
 * ReactJS 16.0 
 * Material-UI
 * Redux 
