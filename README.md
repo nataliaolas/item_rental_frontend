@@ -1,6 +1,6 @@
-# Wypożyczalnia przedmiotów 
+# Item rental 
 ## General Info 
-Wypożyczalnia is application for renting various types of items. 
+Item rental is application for renting various types of items. 
 In this application  we can: 
 * register account
 * login 
